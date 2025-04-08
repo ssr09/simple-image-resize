@@ -141,8 +141,10 @@ function handleFile(file) {
 
 function setOutputFormat(format) {
     format = format.toLowerCase();
-    if (format === 'jpg' || format === 'jpeg') {
+    if (format === 'jpeg') {
         outputFormatSelect.value = 'jpeg';
+    } else if (format === 'jpg') {
+        outputFormatSelect.value = 'jpg';
     } else if (format === 'png') {
         outputFormatSelect.value = 'png';
     } else if (format === 'webp') {
@@ -276,7 +278,7 @@ async function resizeImage(file, maxWidth, maxHeight, outputFormat) {
                 const ctx = canvas.getContext('2d');
                 
                 // Draw image with white background (for transparent images)
-                if (outputFormat === 'jpeg') {
+                if (outputFormat === 'jpeg' || outputFormat === 'jpg') {
                     ctx.fillStyle = 'white';
                     ctx.fillRect(0, 0, width, height);
                 }
@@ -288,7 +290,7 @@ async function resizeImage(file, maxWidth, maxHeight, outputFormat) {
                 canvas.toBlob(
                     blob => resolve(blob),
                     'image/' + outputFormat,
-                    outputFormat === 'jpeg' ? 0.92 : 1
+                    outputFormat === 'jpeg' || outputFormat === 'jpg' ? 0.92 : 1
                 );
             };
             img.onerror = reject;
