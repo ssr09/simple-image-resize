@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Image Resize</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="A simple, privacy-focused tool to resize and optimize images directly in your browser. No uploads, no servers, just fast and private image processing.">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Simple Image Resize</h1>
+            <p>Resize, convert, and optimize your images directly in your browser</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="uploader-container">
+            <div id="upload-area" class="upload-area">
+                <div class="upload-prompt">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop an image here or</p>
+                    <label for="file-input" class="btn btn-primary">Browse Files</label>
+                    <input type="file" id="file-input" accept="image/*" hidden>
+                </div>
+                <div id="preview-container" class="preview-container hidden">
+                    <img id="preview-image" alt="Preview">
+                    <button id="change-image" class="btn btn-secondary">Change Image</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="editor-section" class="editor-section hidden">
+            <div class="image-properties">
+                <h2>Image Properties</h2>
+                <div class="properties-container">
+                    <div class="property-group">
+                        <div class="property">
+                            <label>Original Width:</label>
+                            <span id="original-width">0</span> px
+                        </div>
+                        <div class="property">
+                            <label>Original Height:</label>
+                            <span id="original-height">0</span> px
+                        </div>
+                    </div>
+                    <div class="property-group">
+                        <div class="property">
+                            <label>File Size:</label>
+                            <span id="original-size">0</span> KB
+                        </div>
+                        <div class="property">
+                            <label>Format:</label>
+                            <span id="original-format">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings">
+                <h2>Resize Settings</h2>
+                <div class="settings-container">
+                    <div class="setting-group">
+                        <label for="max-width">Max Width (px):</label>
+                        <input type="number" id="max-width" placeholder="Width" min="1">
+                    </div>
+                    <div class="setting-group">
+                        <label for="max-height">Max Height (px):</label>
+                        <input type="number" id="max-height" placeholder="Height" min="1">
+                    </div>
+                    <div class="setting-group aspect-ratio-toggle">
+                        <label for="lock-aspect-ratio">Lock Aspect Ratio:</label>
+                        <div class="toggle-container">
+                            <input type="checkbox" id="lock-aspect-ratio" checked>
+                            <label for="lock-aspect-ratio" class="toggle-label">
+                                <span class="toggle-inner"></span>
+                                <span class="toggle-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-container">
+                    <div class="setting-group">
+                        <label for="max-size">Max File Size (KB):</label>
+                        <input type="number" id="max-size" placeholder="Size in KB" min="1">
+                    </div>
+                    <div class="setting-group">
+                        <label for="output-format">Output Format:</label>
+                        <select id="output-format">
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp">WebP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="resize-button" class="btn btn-primary">Resize Image</button>
+            </div>
+        </section>
+
+        <section id="result-section" class="result-section hidden">
+            <h2>Result</h2>
+            <div class="result-container">
+                <div id="result-image-container" class="result-image-container">
+                    <img id="result-image" alt="Resized Image">
+                </div>
+                <div class="result-details">
+                    <div class="property">
+                        <label>New Width:</label>
+                        <span id="result-width">0</span> px
+                    </div>
+                    <div class="property">
+                        <label>New Height:</label>
+                        <span id="result-height">0</span> px
+                    </div>
+                    <div class="property">
+                        <label>New Size:</label>
+                        <span id="result-size">0</span> KB
+                    </div>
+                    <div class="property">
+                        <label>Format:</label>
+                        <span id="result-format">-</span>
+                    </div>
+                    <button id="download-button" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Download Image
+                    </button>
+                    <button id="resize-again" class="btn btn-secondary">
+                        Resize Again
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div id="alert-container" class="alert-container"></div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>All image processing happens in your browser. Your images are never uploaded to any server.</p>
+            <p>Created with <i class="fas fa-heart"></i> for privacy-conscious users | <a href="https://github.com/ssr09/simple-image-resize" target="_blank"><i class="fab fa-github"></i> GitHub</a></p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.0/browser-image-compression.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
