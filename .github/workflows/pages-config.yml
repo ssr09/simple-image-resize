@@ -1,0 +1,7 @@
+# Configuration for GitHub Pages
+
+pages:
+  base_url: /simple-image-resize
+  build:
+    source: "."
+    destination: "."
