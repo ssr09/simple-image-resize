@@ -141,8 +141,10 @@ function handleFile(file) {
 
 function setOutputFormat(format) {
     format = format.toLowerCase();
-    if (format === 'jpeg' || format === 'jpg') {
+    if (format === 'jpeg') {
         outputFormatSelect.value = 'jpeg';
+    } else if (format === 'jpg') {
+        outputFormatSelect.value = 'jpg';
     } else if (format === 'png') {
         outputFormatSelect.value = 'png';
     } else if (format === 'webp') {
@@ -284,11 +286,20 @@ async function resizeImage(file, maxWidth, maxHeight, outputFormat) {
                 // Draw the image
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // Convert to blob
+                // Convert to blob - Both JPG and JPEG use the same MIME type of 'image/jpeg'
+                const mimeType = (outputFormat === 'jpg' || outputFormat === 'jpeg') ? 'image/jpeg' : `image/${outputFormat}`;
+                const quality = (outputFormat === 'jpg' || outputFormat === 'jpeg') ? 0.92 : 1;
+                
                 canvas.toBlob(
-                    blob => resolve(blob),
-                    'image/' + outputFormat,
-                    outputFormat === 'jpeg' || outputFormat === 'jpg' ? 0.92 : 1
+                    blob => {
+                        // Create a new blob with the correct format metadata
+                        const formattedBlob = new Blob([blob], { type: mimeType });
+                        // Attach the chosen extension as metadata for use in the download function
+                        formattedBlob.extension = outputFormat;
+                        resolve(formattedBlob);
+                    },
+                    mimeType,
+                    quality
                 );
             };
             img.onerror = reject;
@@ -306,10 +317,16 @@ async function compressImage(imageBlob, maxSizeKB, outputFormat) {
             maxSizeMB: maxSizeKB / 1024, // Convert KB to MB
             maxWidthOrHeight: 4096, // Use original dimensions as we've already resized
             useWebWorker: true,
-            fileType: outputFormat === 'jpg' ? 'image/jpeg' : `image/${outputFormat}`,
+            // Both JPG and JPEG use the same MIME type
+            fileType: (outputFormat === 'jpg' || outputFormat === 'jpeg') ? 'image/jpeg' : `image/${outputFormat}`,
         };
         
-        return await imageCompression(imageBlob, options);
+        const compressedBlob = await imageCompression(imageBlob, options);
+        
+        // Preserve the output format extension choice
+        compressedBlob.extension = outputFormat;
+        
+        return compressedBlob;
     } catch (error) {
         console.error('Compression error:', error);
         throw new Error('Failed to compress image to the requested size');
@@ -331,7 +348,10 @@ function displayResult() {
     resultWidth.textContent = resultImageData.width;
     resultHeight.textContent = resultImageData.height;
     resultSize.textContent = resultImageData.size.toFixed(2);
-    resultFormat.textContent = resultImageData.format;
+    
+    // Format display in uppercase
+    const format = resultImageData.blob.extension ? resultImageData.blob.extension.toUpperCase() : resultImageData.format;
+    resultFormat.textContent = format;
     
     // Check if requirements were met
     const maxSize = parseInt(maxSizeInput.value);
@@ -356,12 +376,9 @@ function downloadImage() {
     
     // Create filename
     const originalName = currentFile.name.split('.')[0];
-    let extension = resultImageData.format.toLowerCase();
     
-    // Standardize extension for JPEG
-    if (extension === 'jpeg') {
-        extension = 'jpg';
-    }
+    // Use the exact extension format the user selected
+    const extension = resultImageData.blob.extension || outputFormatSelect.value;
     
     a.download = `${originalName}_resized.${extension}`;
     
