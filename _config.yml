@@ -1,0 +1,4 @@
+theme: jekyll-theme-minimal
+title: Simple Image Resize
+description: A lightweight, privacy-focused tool to resize and optimize your images directly in your browser.
+baseurl: /simple-image-resize
