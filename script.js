@@ -141,10 +141,8 @@ function handleFile(file) {
 
 function setOutputFormat(format) {
     format = format.toLowerCase();
-    if (format === 'jpeg') {
+    if (format === 'jpeg' || format === 'jpg') {
         outputFormatSelect.value = 'jpeg';
-    } else if (format === 'jpg') {
-        outputFormatSelect.value = 'jpg';
     } else if (format === 'png') {
         outputFormatSelect.value = 'png';
     } else if (format === 'webp') {
@@ -308,7 +306,7 @@ async function compressImage(imageBlob, maxSizeKB, outputFormat) {
             maxSizeMB: maxSizeKB / 1024, // Convert KB to MB
             maxWidthOrHeight: 4096, // Use original dimensions as we've already resized
             useWebWorker: true,
-            fileType: `image/${outputFormat}`,
+            fileType: outputFormat === 'jpg' ? 'image/jpeg' : `image/${outputFormat}`,
         };
         
         return await imageCompression(imageBlob, options);
@@ -358,7 +356,13 @@ function downloadImage() {
     
     // Create filename
     const originalName = currentFile.name.split('.')[0];
-    const extension = resultImageData.format.toLowerCase();
+    let extension = resultImageData.format.toLowerCase();
+    
+    // Standardize extension for JPEG
+    if (extension === 'jpeg') {
+        extension = 'jpg';
+    }
+    
     a.download = `${originalName}_resized.${extension}`;
     
     document.body.appendChild(a);
